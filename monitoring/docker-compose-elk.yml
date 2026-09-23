@@ -20,9 +20,10 @@ services:
     environment:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
     ports:
-      - "127.0.0.1:5000:5000"
+      - "${LOGSTASH_HOST_PORT:-5001}:5000"
     volumes:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - ../runtime-logs:/var/log/caddy:ro
     depends_on:
       - elasticsearch
     networks:

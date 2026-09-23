@@ -5,6 +5,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      LOGSTASH_HOST: host.docker.internal
+      LOGSTASH_PORT: ${LOGSTASH_HOST_PORT:-5001}
+      MICROCRM_ENVIRONMENT: docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - microcrm
 
@@ -16,6 +22,8 @@ services:
       - back
     ports:
       - "80:8080"
+    volumes:
+      - ./runtime-logs:/var/log/caddy
     networks:
       - microcrm
 

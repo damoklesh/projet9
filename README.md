@@ -156,7 +156,7 @@ docker compose -f monitoring/docker-compose-elk.yml up
 Services:
 
 - Elasticsearch: http://localhost:9200
-- Logstash TCP JSON input: `localhost:5000`
+- Logstash TCP JSON input: `localhost:5001` (host port; Logstash listens on container port `5000`)
 - Kibana: http://localhost:5601
 
 The Logstash pipeline accepts newline-delimited JSON over TCP and writes events to daily `microcrm-*` Elasticsearch indices. Stop the stack with:
@@ -166,6 +166,21 @@ docker compose -f monitoring/docker-compose-elk.yml down
 ```
 
 Add `-v` to the `down` command only when the local Elasticsearch data volume should also be removed.
+
+### MicroCRM log collection
+
+The backend emits structured JSON logs to the console and sends the same events to Logstash over TCP. The Docker Compose runtime configures the backend to use `host.docker.internal:5001`, which is the Logstash input exposed by the local monitoring stack. Backend events include timestamp, level, logger, message, service, environment, and exception data when available.
+
+Caddy writes frontend HTTP access logs as JSON to `runtime-logs/access.json`. The application Compose file mounts this directory into the frontend container, while the monitoring Compose file mounts it read-only into Logstash. Logstash reads those events, adds frontend/backend tags, and sends both streams to the daily `microcrm-*` Elasticsearch indices.
+
+To see application events in Kibana:
+
+1. Start the monitoring stack.
+2. Start the application with `docker compose up --build`.
+3. Open `http://localhost:5601` and create a data view matching `microcrm-*`.
+4. Generate activity by opening `http://localhost` and using the application.
+
+The monitoring stack and the application stack are intentionally started separately. Start ELK first when backend TCP delivery should be available from the beginning. If ELK is stopped, the backend continues to log to its console and retries the Logstash connection.
 
 ## CI/CD
 

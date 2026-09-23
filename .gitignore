@@ -16,3 +16,6 @@ front/test-results/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local runtime logs
+runtime-logs/

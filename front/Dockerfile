@@ -12,8 +12,8 @@ FROM caddy:2.11.4-alpine
 
 RUN addgroup -S app \
     && adduser -S -G app app \
-    && mkdir -p /srv /config /data \
-    && chown -R app:app /srv /config /data
+    && mkdir -p /srv /config /data /var/log/caddy \
+    && chown -R app:app /srv /config /data /var/log/caddy
 
 COPY --from=build --chown=app:app /app/dist/microcrm/browser/ /srv/
 COPY Caddyfile /etc/caddy/Caddyfile
