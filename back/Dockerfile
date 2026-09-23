@@ -4,7 +4,8 @@ WORKDIR /workspace
 
 COPY . .
 
-RUN chmod +x gradlew \
+RUN sed -i 's/\r$//' gradlew \
+    && chmod +x gradlew \
     && ./gradlew clean build --no-daemon
 
 FROM eclipse-temurin:17-jre-jammy

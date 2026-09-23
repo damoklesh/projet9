@@ -2,95 +2,81 @@
    <img src="./front/src/favicon.png" width="192px" />
 </p>
 
-# MicroCRM (P7 - Développeur Full-Stack - Java et Angular - Mettez en œuvre l'intégration et le déploiement continu d'une application Full-Stack)
+# MicroCRM
 
-MicroCRM est une application de démonstration basique ayant pour être objectif de servir de socle pour le module "P7 - Développeur Full-Stack".
+MicroCRM is a basic demonstration application used as a foundation for the P7 Full-Stack Developer module.
 
-L'application MicroCRM est une implémentation simplifiée d'un ["CRM" (Customer Relationship Management)](https://fr.wikipedia.org/wiki/Gestion_de_la_relation_client). Les fonctionnalités sont limitées à la création, édition et la visualisations des individus liés à des organisations.
+It is a simplified [Customer Relationship Management (CRM)](https://en.wikipedia.org/wiki/Customer_relationship_management) application for creating and editing people associated with organizations.
 
-![Page d'accueil](./misc/screenshots/screenshot_1.png)
-![Édition de la fiche d'un individu](./misc/screenshots/screenshot_2.png)
+![Home page](./misc/screenshots/screenshot_1.png)
+![Person details editing](./misc/screenshots/screenshot_2.png)
 
-## Code source
+## Source code
 
-### Organisation
+This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains two components:
 
-Ce [monorepo](https://en.wikipedia.org/wiki/Monorepo) contient les 2 composantes du projet "MicroCRM":
+- A Java Spring Boot 3 backend;
+- An Angular 17 frontend.
 
-- La partie serveur (ou "backend"), en Java SpringBoot 3;
-- La partie cliente (ou "frontend"), en Angular 17.
+## Local development
 
-### Démarrer avec les sources
+### Backend
 
-#### Serveur
+Requirements:
 
-##### Dépendances
+- [OpenJDK 17 or later](https://openjdk.org/)
 
-- [OpenJDK >= 17](https://openjdk.org/)
+Build and test the backend:
 
-##### Procédure
+```shell
+cd back
+./gradlew build
+./gradlew test
+```
 
-1. Se positionner dans le répertoire `back` avec une invite de commande:
+Start the backend after building:
 
-   ```shell
-   cd back
-   ```
+```shell
+java -jar build/libs/microcrm-0.0.1-SNAPSHOT.jar
+```
 
-2. Construire le JAR:
+The API is available at http://localhost:8080.
 
-   ```shell
-   # Sur Linux
-   ./gradlew build
+### Frontend
 
-   # Sur Windows
-   gradlew.bat build
-   ```
+Requirements:
 
-3. Démarrer le service:
+- [NPM 10.2.4 or later](https://www.npmjs.com/)
 
-   ```shell
-   java -jar build/libs/microcrm-0.0.1-SNAPSHOT.jar
-   ```
+Install, build, and start the Angular development server:
 
-Puis ouvrir l'URL http://localhost:8080 dans votre navigateur.
+```shell
+cd front
+npm ci
+npm run build
+npx @angular/cli serve
+```
 
-#### Client
+The development application is available at http://localhost:4200.
 
-##### Dépendances
+## Tests and coverage
 
-- [NPM >= 10.2.4](https://www.npmjs.com/)
+### Backend
 
-##### Procédure
+```shell
+cd back
+./gradlew test
+./gradlew clean build jacocoTestReport
+```
 
-1. Se positionner dans le répertoire `front` avec une invite de commande:
+- JUnit Platform runs the Java tests.
+- JUnit XML results are written to `back/build/test-results/test/`.
+- JaCoCo XML coverage for SonarCloud is written to `back/build/reports/jacoco/test/jacocoTestReport.xml`.
+- JaCoCo HTML coverage is written to `back/build/reports/jacoco/test/html/index.html`.
 
-   ```shell
-   cd front
-   ```
+### Frontend
 
-2. (La première fois seulement) Installer les dépendances NodeJS:
-
-   ```shell
-   npm install
-   ```
-
-3. Démarrer le service de développement:
-
-   ```shell
-   npx @angular/cli serve
-   ```
-
-Puis ouvrir l'URL http://localhost:4200 dans votre navigateur.
-
-### Exécution des tests
-
-#### Client
-
-**Dépendances**
-
-- Google Chrome ou Chromium
-
-Dans votre terminal:
+The Angular tests use Jasmine and Karma. Chrome or Chromium is required.
 
 ```shell
 cd front
@@ -98,89 +84,98 @@ npm ci
 npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 ```
 
-Cette commande execute les tests Angular sans interface graphique et genere:
+This command runs headlessly and produces:
 
-- le rapport JUnit dans `front/test-results/junit.xml`;
-- le rapport de couverture HTML dans `front/coverage/microcrm/index.html`;
-- le rapport LCOV dans `front/coverage/microcrm/lcov.info`;
-- un resume de couverture dans la sortie du terminal.
+- JUnit XML results in `front/test-results/junit.xml`;
+- HTML coverage in `front/coverage/microcrm/index.html`;
+- an LCOV report for SonarCloud in `front/coverage/microcrm/lcov.info`;
+- a text coverage summary in the terminal.
 
-#### Serveur
+## Docker
 
-Dans votre terminal:
+The frontend and backend use independent multi-stage Dockerfiles. The runtime images do not use Supervisor or the former standalone container.
 
-```shell
-cd back
-./gradlew test
-```
-
-Pour construire le backend et generer les rapports de tests et de couverture JaCoCo:
-
-```shell
-./gradlew clean build jacocoTestReport
-```
-
-Les resultats sont disponibles dans:
-
-- `back/build/test-results/test/` pour les resultats JUnit XML;
-- `back/build/reports/jacoco/test/jacocoTestReport.xml` pour SonarCloud;
-- `back/build/reports/jacoco/test/html/index.html` pour le rapport HTML.
-
-### Images Docker
-
-#### Client
-
-##### Construire l'image
+### Build the individual images
 
 ```shell
 docker build -f front/Dockerfile -t orion-microcrm-front:latest front
-```
-
-##### Exécuter l'image
-
-```shell
-docker run -it --rm -p 80:8080 orion-microcrm-front:latest
-```
-
-L'application sera disponible sur http://localhost.
-
-#### Serveur
-
-##### Construire l'image
-
-```shell
 docker build -f back/Dockerfile -t orion-microcrm-back:latest back
 ```
 
-##### Exécuter l'image
+Run the images independently:
 
 ```shell
+docker run -it --rm -p 80:8080 orion-microcrm-front:latest
 docker run -it --rm -p 8080:8080 orion-microcrm-back:latest
 ```
 
-L'API sera disponible sur http://localhost:8080.
+The frontend is available at http://localhost and the API at http://localhost:8080.
 
-### Démarrer l'application avec Docker Compose
+### Docker Compose
 
-Le fichier Compose démarre les services `front` et `back` avec leurs Dockerfiles indépendants. La base HSQLDB reste embarquée dans le backend.
+The Compose file starts the `front` and `back` services. HSQLDB remains embedded in the backend; no external database is required.
+
+From the repository root, start the complete application with:
 
 ```shell
 docker compose up --build
 ```
 
-L'application est disponible sur http://localhost et l'API sur http://localhost:8080.
+The first run builds both images. Once the containers are running, open the frontend at:
 
-Pour arrêter les services:
+```text
+http://localhost
+```
+
+The backend API is available at:
+
+```text
+http://localhost:8080
+```
+
+The frontend container listens on port 8080 internally and is published on port 80 by Compose. The backend is published on port 8080. The frontend uses `http://localhost:8080` to call the backend.
+
+Stop the services with:
 
 ```shell
 docker compose down
 ```
 
-### Publication des images Docker
+## CI/CD
 
-Cuando un push a `main` supera todo el workflow de CI, el workflow de CD publica las dos imágenes en GHCR:
+The workflows follow this sequence:
 
-- `ghcr.io/damoklesh/orion-microcrm-front:sha-<commit>` y `:main`;
-- `ghcr.io/damoklesh/orion-microcrm-back:sha-<commit>` y `:main`.
+```text
+push / pull_request
+        ↓
+build
+        ↓
+tests + coverage
+        ↓
+SonarCloud
+        ↓
+Quality Gate
+        ↓
+Docker
+        ↓
+main → GHCR
+```
 
-El tag `sha-<commit>` permite relacionar cada imagen con el commit validado. El job usa `GITHUB_TOKEN` con permisos limitados de lectura del repositorio y escritura de paquetes.
+The CI workflow validates pushes, pull requests, and manual runs. The CD workflow publishes images only after a successful CI workflow caused by a push to `main`. Pull requests never publish images.
+
+Published image tags are:
+
+- `ghcr.io/damoklesh/orion-microcrm-front:sha-<commit>` and `:main`;
+- `ghcr.io/damoklesh/orion-microcrm-back:sha-<commit>` and `:main`.
+
+The `sha-<commit>` tag provides immutable traceability to the validated commit.
+
+## Secrets
+
+The only repository secret required for SonarCloud analysis is:
+
+```text
+SONAR_TOKEN
+```
+
+Configure it in GitHub Actions repository secrets. Never commit its value, place it in a Dockerfile, or print it in logs. GHCR authentication uses the automatic GitHub Actions `GITHUB_TOKEN`.
