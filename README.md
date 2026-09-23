@@ -141,6 +141,32 @@ Stop the services with:
 docker compose down
 ```
 
+## Local ELK monitoring stack
+
+The local Elasticsearch, Logstash, and Kibana stack is kept separate from the MicroCRM runtime Compose file. It is intended for local observability and is not started by CI/CD.
+
+The stack requires approximately 4 GB of RAM available to Docker.
+
+Start the stack from the repository root:
+
+```shell
+docker compose -f monitoring/docker-compose-elk.yml up
+```
+
+Services:
+
+- Elasticsearch: http://localhost:9200
+- Logstash TCP JSON input: `localhost:5000`
+- Kibana: http://localhost:5601
+
+The Logstash pipeline accepts newline-delimited JSON over TCP and writes events to daily `microcrm-*` Elasticsearch indices. Stop the stack with:
+
+```shell
+docker compose -f monitoring/docker-compose-elk.yml down
+```
+
+Add `-v` to the `down` command only when the local Elasticsearch data volume should also be removed.
+
 ## CI/CD
 
 The workflows follow this sequence:
