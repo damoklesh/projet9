@@ -94,8 +94,16 @@ Dans votre terminal:
 
 ```shell
 cd front
-CHROME_BIN=</path/to/google/chrome> npm test
+npm ci
+npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 ```
+
+Cette commande execute les tests Angular sans interface graphique et genere:
+
+- le rapport JUnit dans `front/test-results/junit.xml`;
+- le rapport de couverture HTML dans `front/coverage/microcrm/index.html`;
+- le rapport LCOV dans `front/coverage/microcrm/lcov.info`;
+- un resume de couverture dans la sortie du terminal.
 
 #### Serveur
 
@@ -105,6 +113,18 @@ Dans votre terminal:
 cd back
 ./gradlew test
 ```
+
+Pour construire le backend et generer les rapports de tests et de couverture JaCoCo:
+
+```shell
+./gradlew clean build jacocoTestReport
+```
+
+Les resultats sont disponibles dans:
+
+- `back/build/test-results/test/` pour les resultats JUnit XML;
+- `back/build/reports/jacoco/test/jacocoTestReport.xml` pour SonarCloud;
+- `back/build/reports/jacoco/test/html/index.html` pour le rapport HTML.
 
 ### Images Docker
 
