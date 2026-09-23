@@ -159,3 +159,19 @@ docker run -it --rm -p 8080:8080 orion-microcrm-back:latest
 ```
 
 L'API sera disponible sur http://localhost:8080.
+
+### Démarrer l'application avec Docker Compose
+
+Le fichier Compose démarre les services `front` et `back` avec leurs Dockerfiles indépendants. La base HSQLDB reste embarquée dans le backend.
+
+```shell
+docker compose up --build
+```
+
+L'application est disponible sur http://localhost et l'API sur http://localhost:8080.
+
+Pour arrêter les services:
+
+```shell
+docker compose down
+```
