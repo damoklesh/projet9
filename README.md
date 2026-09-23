@@ -175,3 +175,12 @@ Pour arrêter les services:
 ```shell
 docker compose down
 ```
+
+### Publication des images Docker
+
+Cuando un push a `main` supera todo el workflow de CI, el workflow de CD publica las dos imágenes en GHCR:
+
+- `ghcr.io/damoklesh/orion-microcrm-front:sha-<commit>` y `:main`;
+- `ghcr.io/damoklesh/orion-microcrm-back:sha-<commit>` y `:main`.
+
+El tag `sha-<commit>` permite relacionar cada imagen con el commit validado. El job usa `GITHUB_TOKEN` con permisos limitados de lectura del repositorio y escritura de paquetes.
