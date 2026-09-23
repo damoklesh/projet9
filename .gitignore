@@ -1,0 +1,18 @@
+# IDEs
+.idea/
+*.iml
+
+# Gradle
+back/.gradle/
+back/build/
+
+# Angular and Node.js
+front/node_modules/
+front/dist/
+front/.angular/
+front/coverage/
+front/test-results/
+
+# OS files
+.DS_Store
+Thumbs.db
