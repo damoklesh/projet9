@@ -17,6 +17,7 @@ services:
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.19.21
+    user: "0:0"
     environment:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
     ports:
